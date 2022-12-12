@@ -8,6 +8,7 @@
   "scripts": {
     "db:start": "docker start ability-ab-postgres-1",
     "prisma:dev:deploy": "prisma migrate deploy",
+    "prisma:dev:generate": "prisma generate",
     "db:dev:rm": "docker compose rm ab-postgres -s -f -v",
     "db:dev:up": "docker compose up ab-postgres -d",
     "db:dev:restart": "yarn db:dev:rm && yarn db:dev:up && sleep 3 && yarn prisma:dev:deploy",
