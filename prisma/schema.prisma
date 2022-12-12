@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String       @id @default(uuid())
+  firstName  String       @db.VarChar(255)
+  secondName String?      @db.VarChar(255)
+  email      String       @unique
+  hash       String
+  urlImage   String?      @db.VarChar(255)
+  tel        String?
+  role       Role         @default(STUDENT)
+  state      String?      @db.VarChar(255)
+  city       String?      @db.VarChar(255)
+  district   String?      @db.VarChar(255)
+  zipCode    String?      @db.VarChar(255)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  deletedAt  Boolean      @default(false)
+  UserMethod UserMethod[]
+
+  @@map("users")
+}
+
+model UserMethod {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  method    Method   @relation(fields: [methodId], references: [id], onDelete: Cascade)
+  userId    String   @db.VarChar(255)
+  methodId  String   @db.VarChar(255)
+  main      Boolean  @default(false)
+  lesson    String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt Boolean  @default(false)
+
+  @@map("user_to_method")
+}
+
+model Method {
+  id           String       @id @default(uuid())
+  title        String       @db.VarChar(255)
+  slug         String       @unique
+  description  String?
+  urlImage     String?      @db.VarChar(255)
+  instrument   Instrument?  @relation(fields: [instrumentId], references: [id])
+  instrumentId String?      @default(uuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    Boolean      @default(false)
+  UserMethod   UserMethod[]
+
+  @@map("methods")
+}
+
+model Instrument {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  family    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt Boolean  @default(false)
+  Method    Method[]
+
+  @@map("instruments")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  INSTRUCTOR
+  CONDUCTOR
+}
